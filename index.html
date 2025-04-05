@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tarefas Dev</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -87,6 +88,50 @@
                 <span class="stat-number" id="highPriorityTasks">1</span>
                 <span class="stat-label">Prioridade alta</span>
             </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Edição -->
+    <div id="editTaskModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Editar Tarefa</h2>
+            <form id="editTaskForm">
+                <div class="form-group">
+                    <label for="editTaskTitle">Tarefa</label>
+                    <input type="text" id="editTaskTitle" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editTaskDescription">Descrição</label>
+                    <textarea id="editTaskDescription" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editTaskCategory">Categoria</label>
+                    <select id="editTaskCategory" required>
+                        <option value="Feature Development">Desenvolvimento de Feature</option>
+                        <option value="Bug Fix">Bug Fix</option>
+                        <option value="Documentation">Documentação</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editTaskPriority">Prioridade</label>
+                    <select id="editTaskPriority" required>
+                        <option value="Low">Baixa</option>
+                        <option value="Medium">Média</option>
+                        <option value="High">Alta</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editTaskDueDate">Data de Entrega</label>
+                    <input type="date" id="editTaskDueDate" required>
+                </div>
+                
+                <button type="submit" class="edit-task-btn">Salvar Alterações</button>
+            </form>
         </div>
     </div>
     <script src="script.js"></script>

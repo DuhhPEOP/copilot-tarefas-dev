@@ -144,6 +144,7 @@ class TaskManager {
                             ${task.completed ? '↩️' : '✓'}
                         </button>
                         <button onclick="taskManager.deleteTask(${task.id})">🗑️</button>
+                        <button onclick="openEditModal(${task.id})" class="edit-btn">✏️ Editar</button>
                     </div>
                 </div>
             `;
@@ -159,7 +160,58 @@ class TaskManager {
         if (days === 1) return '1 day';
         return `${days} days`;
     }
+
+    editTask(taskId, updatedTask) {
+        const taskIndex = this.tasks.findIndex(task => task.id === taskId);
+        if (taskIndex !== -1) {
+            this.tasks[taskIndex] = { ...this.tasks[taskIndex], ...updatedTask };
+            this.saveTasks();
+            this.updateUI();
+        }
+    }
 }
 
 // Initialize the task manager
 const taskManager = new TaskManager();
+
+function openEditModal(taskId) {
+    const modal = document.getElementById('editTaskModal');
+    const task = taskManager.tasks.find(t => t.id === taskId);
+    
+    if (task) {
+        document.getElementById('editTaskTitle').value = task.title;
+        document.getElementById('editTaskDescription').value = task.description;
+        document.getElementById('editTaskCategory').value = task.category;
+        document.getElementById('editTaskPriority').value = task.priority;
+        document.getElementById('editTaskDueDate').value = task.dueDate;
+        
+        modal.style.display = 'block';
+        
+        const editForm = document.getElementById('editTaskForm');
+        editForm.onsubmit = (e) => {
+            e.preventDefault();
+            
+            const updatedTask = {
+                title: document.getElementById('editTaskTitle').value,
+                description: document.getElementById('editTaskDescription').value,
+                category: document.getElementById('editTaskCategory').value,
+                priority: document.getElementById('editTaskPriority').value,
+                dueDate: document.getElementById('editTaskDueDate').value
+            };
+            
+            taskManager.editTask(taskId, updatedTask);
+            modal.style.display = 'none';
+        };
+    }
+}
+
+document.querySelector('.close').addEventListener('click', () => {
+    document.getElementById('editTaskModal').style.display = 'none';
+});
+
+window.addEventListener('click', (event) => {
+    const modal = document.getElementById('editTaskModal');
+    if (event.target === modal) {
+        modal.style.display = 'none';
+    }
+});
