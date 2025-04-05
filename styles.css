@@ -7,6 +7,24 @@
   --neon-shadow: 0 0 10px var(--primary-color);
 }
 
+:root[data-theme="dark"] {
+    --primary-color: #00ff8c;
+    --secondary-color: #ff00ff;
+    --background-color: #0a0a0a;
+    --surface-color: #1a1a1a;
+    --text-color: #ffffff;
+    --neon-shadow: 0 0 10px var(--primary-color);
+}
+
+:root[data-theme="light"] {
+    --primary-color: #00a86b;
+    --secondary-color: #d400d4;
+    --background-color: #f0f0f0;
+    --surface-color: #ffffff;
+    --text-color: #1a1a1a;
+    --neon-shadow: 0 0 10px rgba(0, 168, 107, 0.5);
+}
+
 body {
   background-color: var(--background-color);
   color: var(--text-color);
@@ -142,4 +160,119 @@ h1 {
   letter-spacing: 1px;
   cursor: pointer;
   transition: all 0.3s ease;
+}
+
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 20px;
+    background: var(--surface-color);
+    border: 1px solid var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--neon-shadow);
+}
+
+.theme-icon {
+    font-size: 1.2rem;
+}
+
+.theme-status {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.pomodoro-container {
+    background: var(--surface-color);
+    border: 2px solid var(--primary-color);
+    border-radius: 15px;
+    padding: 2rem;
+    margin-top: 2rem;
+    box-shadow: var(--neon-shadow);
+}
+
+.pomodoro-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.pomodoro-presets {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin: 1rem 0;
+}
+
+.preset-btn, #customTimerBtn {
+    background: var(--surface-color);
+    border: 1px solid var(--primary-color);
+    color: var(--text-color);
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.preset-btn:hover, #customTimerBtn:hover {
+    background: var(--primary-color);
+    color: var(--surface-color);
+    transform: translateY(-2px);
+}
+
+.timer-display {
+    text-align: center;
+    font-size: 4rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    text-shadow: var(--neon-shadow);
+    margin: 2rem 0;
+}
+
+.timer-phase {
+    font-size: 1.2rem;
+    color: var(--text-color);
+    margin-top: 0.5rem;
+}
+
+.timer-controls {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.timer-controls button {
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    color: var(--text-color);
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.timer-controls button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.export-btn {
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    color: var(--text-color);
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+}
+
+.export-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--neon-shadow);
 }

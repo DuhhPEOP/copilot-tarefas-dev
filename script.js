@@ -169,10 +169,212 @@ class TaskManager {
             this.updateUI();
         }
     }
+
+    exportToCSV() {
+        if (this.tasks.length === 0) {
+            alert('Não há tarefas para exportar!');
+            return;
+        }
+
+        // Define CSV headers
+        const headers = ['Título', 'Descrição', 'Categoria', 'Prioridade', 'Data de Entrega', 'Status'];
+        
+        // Convert tasks to CSV format
+        const csvContent = [
+            headers.join(','),
+            ...this.tasks.map(task => [
+                this.escapeCsvField(task.title),
+                this.escapeCsvField(task.description),
+                this.escapeCsvField(task.category),
+                this.escapeCsvField(task.priority),
+                this.escapeCsvField(task.dueDate),
+                this.escapeCsvField(task.completed ? 'Completa' : 'Pendente')
+            ].join(','))
+        ].join('\n');
+
+        // Create blob and download link
+        const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        
+        // Set download attributes
+        link.setAttribute('href', url);
+        link.setAttribute('download', `tarefas_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.display = 'none';
+        
+        // Trigger download
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    escapeCsvField(field) {
+        // Handle null or undefined fields
+        if (field === null || field === undefined) {
+            return '';
+        }
+        
+        // Convert to string and escape special characters
+        const stringField = String(field);
+        if (stringField.includes(',') || stringField.includes('"') || stringField.includes('\n')) {
+            return `"${stringField.replace(/"/g, '""')}"`;
+        }
+        return stringField;
+    }
+}
+
+// ThemeManager class
+class ThemeManager {
+    constructor() {
+        this.themeToggle = document.getElementById('themeToggle');
+        this.root = document.documentElement;
+        this.currentTheme = localStorage.getItem('theme') || 'dark';
+        
+        this.initialize();
+        this.setupEventListeners();
+    }
+
+    initialize() {
+        this.root.setAttribute('data-theme', this.currentTheme);
+        this.updateToggleButton();
+    }
+
+    setupEventListeners() {
+        this.themeToggle.addEventListener('click', () => this.toggleTheme());
+    }
+
+    toggleTheme() {
+        this.currentTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
+        this.root.setAttribute('data-theme', this.currentTheme);
+        localStorage.setItem('theme', this.currentTheme);
+        this.updateToggleButton();
+    }
+
+    updateToggleButton() {
+        const icon = this.themeToggle.querySelector('.theme-icon');
+        const status = this.themeToggle.querySelector('.theme-status');
+        
+        if (this.currentTheme === 'dark') {
+            icon.textContent = '🌙';
+            status.textContent = 'Modo Escuro';
+        } else {
+            icon.textContent = '☀️';
+            status.textContent = 'Modo Claro';
+        }
+    }
+}
+
+// PomodoroTimer class
+class PomodoroTimer {
+    constructor() {
+        this.timeLeft = 1500; // 25 minutes in seconds
+        this.workTime = 1500;
+        this.breakTime = 300;
+        this.isRunning = false;
+        this.isBreak = false;
+        this.timerId = null;
+        
+        this.initializeElements();
+        this.setupEventListeners();
+    }
+
+    initializeElements() {
+        this.timerDisplay = document.getElementById('timerDisplay');
+        this.startButton = document.getElementById('startTimer');
+        this.pauseButton = document.getElementById('pauseTimer');
+        this.resetButton = document.getElementById('resetTimer');
+        this.timerPhase = document.querySelector('.timer-phase');
+        this.presetButtons = document.querySelectorAll('.preset-btn');
+        this.customButton = document.getElementById('customTimerBtn');
+    }
+
+    setupEventListeners() {
+        this.startButton.addEventListener('click', () => this.startTimer());
+        this.pauseButton.addEventListener('click', () => this.pauseTimer());
+        this.resetButton.addEventListener('click', () => this.resetTimer());
+        
+        this.presetButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.workTime = parseInt(btn.dataset.work) * 60;
+                this.breakTime = parseInt(btn.dataset.break) * 60;
+                this.resetTimer();
+            });
+        });
+
+        this.customButton.addEventListener('click', () => this.showCustomTimerDialog());
+    }
+
+    startTimer() {
+        if (!this.isRunning) {
+            this.isRunning = true;
+            this.startButton.disabled = true;
+            this.pauseButton.disabled = false;
+            
+            this.timerId = setInterval(() => {
+                this.timeLeft--;
+                this.updateDisplay();
+                
+                if (this.timeLeft === 0) {
+                    this.playNotification();
+                    this.togglePhase();
+                }
+            }, 1000);
+        }
+    }
+
+    pauseTimer() {
+        clearInterval(this.timerId);
+        this.isRunning = false;
+        this.startButton.disabled = false;
+        this.pauseButton.disabled = true;
+    }
+
+    resetTimer() {
+        this.pauseTimer();
+        this.timeLeft = this.workTime;
+        this.isBreak = false;
+        this.updateDisplay();
+        this.timerPhase.textContent = 'Foco';
+    }
+
+    togglePhase() {
+        this.isBreak = !this.isBreak;
+        this.timeLeft = this.isBreak ? this.breakTime : this.workTime;
+        this.timerPhase.textContent = this.isBreak ? 'Pausa' : 'Foco';
+    }
+
+    updateDisplay() {
+        const minutes = Math.floor(this.timeLeft / 60);
+        const seconds = this.timeLeft % 60;
+        this.timerDisplay.textContent = 
+            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    showCustomTimerDialog() {
+        const workTime = prompt('Tempo de foco (minutos):', '25');
+        const breakTime = prompt('Tempo de pausa (minutos):', '5');
+        
+        if (workTime && breakTime) {
+            this.workTime = parseInt(workTime) * 60;
+            this.breakTime = parseInt(breakTime) * 60;
+            this.resetTimer();
+        }
+    }
+
+    playNotification() {
+        const audio = new Audio('data:audio/wav;base64,//uQRAAAAWMSLwUIYAAsYkXgoQwAEaYLWfkWgAI0wWs/ItAAAGDgYtAgAyN+QWaAAihwMWm4G8QQRDiMcCBcH3Cc+CDv/7xA4Tvh9Rz/y8QADBwMWgQAZG/ILNAARQ4GLTcDeIIIhxGOBAuD7hOfBB3/94gcJ3w+o5/5eIAIAAAVwWgQAVQ2ORaIQwEMAJiDg95G4nQL7mQVWI6GwRcfsZAcsKkJvxgxEjzFUgfHoSQ9Qq7KNwqHwuB13MA4a1q/DmBrHgPcmjiGoh//EwC5nGPEmS4RcfkVKOhJf+WOgoxJclFz3kgn//dBA+ya1GhurNn8zb//9NNutNuhz31f////9vt///z+IdAEAAAK4LQIAKobHItEIYCGAExBwe8jcToF9zIKrEdDYIuP2MgOWFSE34wYiR5iqQPj0JIeoVdlG4VD4XA67mAcNa1fhzA1jwHuTRxDUQ//iYBczjHiTJcIuPyKlHQkv/LHQUYkuSi57yQT//uggfZNajQ3Vmz+Zt//+mm3Wm3Q576v////+32///5/EOgAAADVghQAAAAA//uQZAUAB1WI0PZugAAAAAoQwAAAEk3nRd2qAAAAACiDgAAAAAAABCqEEQRLCgwpBGMlJkIz8jKhGvj4k6jzRnqasNKIeoh5gI7BJaC1A1AoNBjJgbyApVS4IDlZgDU5WUAxEKDNmmALHzZp0Fkz1FMTmGFl1FMEyodIavcCAUHDWrKAIA4aa2oCgILEBupZgHvAhEBcZ6joQBxS76AgccrFlczBvKLC0QI2cBoCFvfTDAo7eoOQInqDPBtvrDEZBNYN5xwNwxQRfw8ZQ5wQVLvO8OYU+mHvFLlDh05Mdg7BT6YrRPpCBznMB2r//xKJjyyOh+cImr2/4doscwD6neZjuZR4AgAABYAAAABy1xcdQtxYBYYZdifkUDgzzXaXn98Z0oi9ILU5mBjFANmRwlVJ3/6jYDAmxaiDG3/6xjQQCCKkRb/6kg/wW+kSJ5//rLobkLSiKmqP/0ikJuDaSaSf/6JiLYLEYnW/+kXg1WRVJL/9EmQ1YZIsv/6Qzwy5qk7/+tEU0nkls3/zIUMPKNX/6yZLf+kFgAfgGyLFAUwY//uQZAUABcd5UiNPVXAAAApAAAAAE0VZQ');
+        audio.play();
+    }
 }
 
 // Initialize the task manager
 const taskManager = new TaskManager();
+
+// Initialize the theme manager
+const themeManager = new ThemeManager();
+
+// Initialize the Pomodoro timer
+const pomodoroTimer = new PomodoroTimer();
 
 function openEditModal(taskId) {
     const modal = document.getElementById('editTaskModal');
@@ -214,4 +416,9 @@ window.addEventListener('click', (event) => {
     if (event.target === modal) {
         modal.style.display = 'none';
     }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const exportBtn = document.getElementById('exportCSV');
+    exportBtn.addEventListener('click', () => taskManager.exportToCSV());
 });

@@ -11,7 +11,10 @@
     <div class="container">
         <header>
             <h1>📝 Tarefas Dev</h1>
-            <div class="theme-toggle">🌙</div>
+            <div class="theme-toggle" id="themeToggle">
+                <span class="theme-icon">🌙</span>
+                <span class="theme-status">Modo Escuro</span>
+            </div>
         </header>
         
         <div class="main-content">
@@ -71,6 +74,7 @@
                         </select>
                     </div>
                 </div>
+                <button id="exportCSV" class="export-btn">📊 Exportar CSV</button>
                 <div id="tasksList"></div>
             </div>
         </div>
@@ -89,49 +93,70 @@
                 <span class="stat-label">Prioridade alta</span>
             </div>
         </div>
-    </div>
-    
-    <!-- Modal de Edição -->
-    <div id="editTaskModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Editar Tarefa</h2>
-            <form id="editTaskForm">
-                <div class="form-group">
-                    <label for="editTaskTitle">Tarefa</label>
-                    <input type="text" id="editTaskTitle" required>
+
+        <div class="pomodoro-container">
+            <div class="pomodoro-header">
+                <h2>⏱️ Pomodoro Timer</h2>
+                <div class="pomodoro-presets">
+                    <button class="preset-btn" data-work="15" data-break="5">15/5</button>
+                    <button class="preset-btn" data-work="30" data-break="10">30/10</button>
+                    <button class="preset-btn" data-work="60" data-break="20">60/20</button>
+                    <button id="customTimerBtn">Personalizado</button>
                 </div>
-                
-                <div class="form-group">
-                    <label for="editTaskDescription">Descrição</label>
-                    <textarea id="editTaskDescription" required></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="editTaskCategory">Categoria</label>
-                    <select id="editTaskCategory" required>
-                        <option value="Feature Development">Desenvolvimento de Feature</option>
-                        <option value="Bug Fix">Bug Fix</option>
-                        <option value="Documentation">Documentação</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="editTaskPriority">Prioridade</label>
-                    <select id="editTaskPriority" required>
-                        <option value="Low">Baixa</option>
-                        <option value="Medium">Média</option>
-                        <option value="High">Alta</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="editTaskDueDate">Data de Entrega</label>
-                    <input type="date" id="editTaskDueDate" required>
-                </div>
-                
-                <button type="submit" class="edit-task-btn">Salvar Alterações</button>
-            </form>
+            </div>
+            <div class="timer-display">
+                <span id="timerDisplay">25:00</span>
+                <div class="timer-phase">Foco</div>
+            </div>
+            <div class="timer-controls">
+                <button id="startTimer">Iniciar</button>
+                <button id="pauseTimer" disabled>Pausar</button>
+                <button id="resetTimer">Resetar</button>
+            </div>
+        </div>
+        
+        <!-- Modal de Edição -->
+        <div id="editTaskModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Editar Tarefa</h2>
+                <form id="editTaskForm">
+                    <div class="form-group">
+                        <label for="editTaskTitle">Tarefa</label>
+                        <input type="text" id="editTaskTitle" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editTaskDescription">Descrição</label>
+                        <textarea id="editTaskDescription" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editTaskCategory">Categoria</label>
+                        <select id="editTaskCategory" required>
+                            <option value="Feature Development">Desenvolvimento de Feature</option>
+                            <option value="Bug Fix">Bug Fix</option>
+                            <option value="Documentation">Documentação</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editTaskPriority">Prioridade</label>
+                        <select id="editTaskPriority" required>
+                            <option value="Low">Baixa</option>
+                            <option value="Medium">Média</option>
+                            <option value="High">Alta</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editTaskDueDate">Data de Entrega</label>
+                        <input type="date" id="editTaskDueDate" required>
+                    </div>
+                    
+                    <button type="submit" class="edit-task-btn">Salvar Alterações</button>
+                </form>
+            </div>
         </div>
     </div>
     <script src="script.js"></script>
